@@ -110,6 +110,21 @@ function verifyScope(token, scope) {
     return token.scope === scope
 }
 
+function getUserFromClient(object) {
+    let query = {client_id: object.client_id};
+    if (query.client_secret) query.client_secret = object.client_secret;
+    return client.find(query)
+        .then((results) => {
+            if (results < 1) return false;
+            let result = results[0];
+            if (!result.user) return false;
+            return result.user;
+        }).catch((err) => {
+            console.log("getUserFromClient - Err: ", err);
+            return false;
+        });
+}
+
 /*
  function _getAuthorizationCode(code) {
  return OAuthAuthorizationCode
@@ -194,9 +209,9 @@ module.exports = {
     revokeToken: revokeToken,
     saveToken: saveToken,
     verifyScope: verifyScope,
+    getUserFromClient: getUserFromClient,
     // getAuthorizationCode: getAuthorizationCode,
     // saveAuthorizationCode: saveAuthorizationCode,
-    // getUserFromClient: getUserFromClient,
     // revokeAuthorizationCode: revokeAuthorizationCode,
 };
 

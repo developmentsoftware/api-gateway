@@ -109,9 +109,9 @@ destroy@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
 
-developmentsoftware-api-commons@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/developmentsoftware-api-commons/-/developmentsoftware-api-commons-0.1.4.tgz#20b96da1abcf0a2591d37604f2421bc3aaa8e032"
+developmentsoftware-api-commons@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/developmentsoftware-api-commons/-/developmentsoftware-api-commons-0.1.5.tgz#ca161dfedb3c90525bd099e26a5d4804ea1243e0"
   dependencies:
     bluebird "^3.5.0"
     dotenv "^4.0.0"
@@ -339,9 +339,9 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
-oauth2-server@^3.0.0:
+"oauth2-server@github:developmentsoftware/node-oauth2-server":
   version "3.0.0"
-  resolved "https://registry.yarnpkg.com/oauth2-server/-/oauth2-server-3.0.0.tgz#c46276b74c3d28634d59ee981f76b58a6459cc28"
+  resolved "https://codeload.github.com/developmentsoftware/node-oauth2-server/tar.gz/adf80a21c63fc551d458534ca01937f2fd50c4b8"
   dependencies:
     basic-auth "1.1.0"
     bluebird "3.5.0"

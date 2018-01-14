@@ -21,6 +21,8 @@ app.use((req, res, next) => {
 app.oauth = new oauthServer({
     model: require('./resources/model'),
     grants: ['password'],
+    accessTokenLifetime: 60 * 60,             // 1 hour.
+    refreshTokenLifetime: 60 * 60 * 24 * 14,  // 2 weeks.
     debug: true
 });
 
