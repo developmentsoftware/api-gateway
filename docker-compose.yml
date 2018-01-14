@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+    api-gateway:
+        build: ./
+        volumes:
+          - "./src:/src/app"
+        ports:
+          - "3000:3000"
+          - "5858:5858"
