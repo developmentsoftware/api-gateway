@@ -13,11 +13,13 @@ app.use(logger('dev'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
 app.use((req, res, next) => {
     req.oauth = new Request(req);
     res.oauth = new Response(res);
     next();
 });
+
 app.oauth = new oauthServer({
     model: require('./resources/model'),
     grants: ['password'],
@@ -69,10 +71,10 @@ app.use((err, req, res, next) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : '';
-
+    console.log(err);
     // render the error page
-    res.status(err.status || 500);
-    res.json({'error': err});
+    res.status(err.statusCode || 500);
+    res.json({'code': err.statusCode || err.code || 500,'error': err.message});
 });
 
 module.exports = app;

@@ -18,7 +18,7 @@ function getAccessToken(bearerToken) {
 
 function getClient(clientId, clientSecret) {
     let query = {clientId: clientId};
-    if (clientSecret) query.client_secret = clientSecret;
+    if (clientSecret) query.clientSecret = clientSecret;
     return client.find(query)
         .then((results) => {
             if (results < 1) return false;
@@ -28,17 +28,18 @@ function getClient(clientId, clientSecret) {
             delete result.redirect_uri;
             return result;
         })
-        .catch(() => {
+        .catch((err) => {
+        err;
             return false;
         });
 }
 
-function getUser(username, password) {
+function getUser(username, password, client) {
     return user
         .get(username)
         .then((result) => {
             if (!result) return false;
-            return result.password === password ? result : false;
+            return result.password === password && result.platformId === client.platformId && result.enabled && client.enabled ? result : false;
         })
         .catch(() => {
             return false;
@@ -47,7 +48,7 @@ function getUser(username, password) {
 
 function revokeToken(token) {
     return refreshToken.get(token.refreshToken).then((rT) => {
-        if (rT) refreshToken.destroy(rT);
+        if (rT) refreshToken.delete(rT.refreshToken);
         let expiredToken = token;
         expiredToken.refreshTokenExpiresAt = new Date('2015-05-28T06:59:53.000Z');
         return expiredToken;
@@ -61,15 +62,15 @@ function saveToken(token, client, user) {
         accessToken.create({
             accessToken: token.accessToken,
             accessTokenExpiresAt: token.accessTokenExpiresAt,
-            client: client,
-            user: user,
+            client: client.clientId,
+            user: user.userId,
             scope: token.scope
         }),
         token.refreshToken ? refreshToken.create({
             refreshToken: token.refreshToken,
             refreshTokenExpiresAt: token.refreshTokenExpiresAt,
-            client: client,
-            user: user,
+            client: client.clientId,
+            user: user.userId,
             scope: token.scope
         }) : [],
 
@@ -85,7 +86,8 @@ function saveToken(token, client, user) {
                 token
             )
         })
-        .catch(() => {
+        .catch((err) => {
+        err;
             return false;
         });
 }
@@ -98,10 +100,8 @@ function getRefreshToken(token) {
             if (!result) return false;
             result.refreshTokenExpiresAt = result.refreshTokenExpiresAt ? new Date(result.expires) : null;
             result.refresh_token = result.refreshToken;
-
             return result;
-
-        }).catch(() => {
+        }).catch((err) => {
             return false;
         });
 }
@@ -162,22 +162,6 @@ function getUserFromClient(object) {
  return code
  }).catch((err) => {
  console.log("saveAuthorizationCode - Err: ", err)
- });
- }
-
- function _getUserFromClient(client) {
- let options = {client_id: client.client_id};
- if (client.client_secret) options.client_secret = client.client_secret;
-
- return OAuthClient
- .findOne(options)
- .populate('User')
- .then((client) => {
- if (!client) return false;
- if (!client.User) return false;
- return client.User;
- }).catch((err) => {
- console.log("getUserFromClient - Err: ", err);
  });
  }
 

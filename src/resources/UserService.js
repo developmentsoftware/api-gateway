@@ -12,26 +12,13 @@ class UserService extends ModelAbstractService {
     modelMap(data, model) {
 
         return {
-            user_id: data.user_id || model.user_id,
-            username: data.name || model.name,
-            password: data.client_id || model.client_id,
-            scope: data.scope || model.scope,
+            userId: data.userId || model.userId,
+            platformId: data.platformId || model.platformId,
+            enabled: data.enabled || model.enabled || true,
+            username: data.username || model.username,
+            password: data.password || model.password,
+            scope: data.scope || model.scope || 'user',
         }
-    }
-
-    //mock
-
-    find(query) {
-        return new Promise((resolv, reject) => {
-            resolv([
-                {
-                    user_id: '124125125',
-                    username: query.username,
-                    password: 'cocomelo',
-                    scope: [],
-                }
-            ])
-        })
     }
 }
 

@@ -1,9 +1,64 @@
 const express = require('express');
 const client = require('./ClientService');
 const user = require('./UserService');
+const accessToken = require('./AccessTokenService');
+const refreshToken = require('./RefreshTokenService');
 const router = express.Router();
 
+/* GET tokens listing. */
+router.get('/oauth/tokens/', (req, res, next) => {
+    accessToken.all()
+        .then(data => {
+            res.json(data);
+        })
+        .catch(next);
+});
 
+/* Get token. */
+router.get('/oauth/tokens/:token', (req, res, next) => {
+    accessToken.get(req.params.token)
+        .then(data => {
+            res.json(data);
+        })
+        .catch(next);
+});
+
+/* Remove token. */
+router.delete('/oauth/tokens/:token', (req, res, next) => {
+    accessToken.delete(req.params.token)
+        .then(() => {
+            res.status(204);
+            res.json('');
+        })
+        .catch(next);
+});
+
+/* GET tokens listing. */
+router.get('/oauth/refresh_tokens/', (req, res, next) => {
+    refreshToken.all()
+        .then(data => {
+            res.json(data);
+        })
+        .catch(next);
+});
+/* Get token. */
+router.get('/oauth/refresh_tokens/:token', (req, res, next) => {
+    refreshToken.get(req.params.token)
+        .then(data => {
+            res.json(data);
+        })
+        .catch(next);
+});
+
+/* Remove token. */
+router.delete('/oauth/refresh_tokens/:token', (req, res, next) => {
+    refreshToken.delete(req.params.token)
+        .then(() => {
+            res.status(204);
+            res.json('');
+        })
+        .catch(next);
+});
 
 /* GET users listing. */
 router.get('/oauth/user/', (req, res, next) => {

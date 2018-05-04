@@ -15,29 +15,30 @@ class ClientService extends ModelAbstractService {
         return {
             name: data.name || model.name,
             clientId: data.clientId || model.clientId,
+            platformId: data.platformId || model.platformId,
+            enabled: data.enabled || model.enabled,
             clientSecret: data.clientSecret || model.clientSecret,
-            redirectUri: data.redirectUri || model.redirectUri,
+            redirectUri: data.redirectUri || model.redirectUri || null,
             grantTypes: data.grantTypes || model.grantTypes,
             scope: data.scope || model.scope,
             user: data.user || model.user || null,
         }
     }
 
-    //mock
-
     find(query) {
         return new Promise((resolv, reject) => {
-            resolv([
-                {
-                    name: 'saraza',
-                    clientId: 123457,
-                    clientSecret: 'holahola',
-                    redirectUri:'localhost.com/login',
-                    grantTypes: ['password'],
-                    scope: [],
-                    user: user.find({username:'meme'}),
-                }
-            ])
+            super.find(query).then((results) => {
+                let promises = [];
+                results.forEach((e) => {
+                    promises.push(new Promise((r, j) => {
+                        user.get(e.user).then((user) => {
+                            e.user = user;
+                            r(e);
+                        }).catch(j);
+                    }));
+                });
+                Promise.all(promises).then(resolv).catch(reject);
+            }).catch(reject);
         })
     }
 }
