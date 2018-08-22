@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const commons = require('developmentsoftware-api-commons');
 const ModelAbstractService = commons.model;
 let user = require('./UserService');
+const uuidV4 = require('uuid/v4');
 
 class ClientService extends ModelAbstractService {
 
@@ -10,15 +11,15 @@ class ClientService extends ModelAbstractService {
         this.primaryKey = 'clientId';
     }
 
-    modelMap(data, model) {
+    modelMap(data, model = {}) {
 
         return {
             name: data.name || model.name,
-            clientId: data.clientId || model.clientId,
+            clientId: data.clientId || model.clientId || uuidV4(),
             platformId: data.platformId || model.platformId,
-            enabled: data.enabled || model.enabled,
+            enabled: data.enabled || model.enabled || true,
             clientSecret: data.clientSecret || model.clientSecret,
-            redirectUri: data.redirectUri || model.redirectUri || null,
+            redirectUri: data.redirectUri || model.redirectUri || '',
             grantTypes: data.grantTypes || model.grantTypes,
             scope: data.scope || model.scope,
             user: data.user || model.user || null,
@@ -30,6 +31,11 @@ class ClientService extends ModelAbstractService {
             super.find(query).then((results) => {
                 let promises = [];
                 results.forEach((e) => {
+                    if (e.user === null) {
+                        return promises.push(new Promise((r, j) => {
+                            r(e);
+                        }));
+                    }
                     promises.push(new Promise((r, j) => {
                         user.get(e.user).then((user) => {
                             e.user = user;

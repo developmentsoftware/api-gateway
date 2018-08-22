@@ -31,7 +31,7 @@ app.oauth = new oauthServer({
 /* Oauth endpoint */
 app.all('/oauth/token', (req, res, next) => {
     app.oauth
-        .token(req.oauth, res.oauth)
+        .token(req.oauth, res.oauth )
         .then((token) => {
             return res.json({
                 "access_token": token.accessToken,
@@ -61,8 +61,8 @@ app.get('/', (req, res) => {
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-    let err = new Error('Not Found');
-    err.status = 404;
+    let err = new Error('Not Found_');
+    err.status = 403;
     next(err);
 });
 

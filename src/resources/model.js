@@ -11,7 +11,7 @@ function getAccessToken(bearerToken) {
         .then((result) => {
             return (!result) ? false : result;
         })
-        .catch(() => {
+        .catch((e) => {
             return false;
         });
 }
@@ -24,22 +24,22 @@ function getClient(clientId, clientSecret) {
             if (results < 1) return false;
             let result = results[0];
             result.grants = ['authorization_code', 'password', 'refresh_token', 'client_credentials'];
-            result.redirectUris = [result.redirect_uri];
-            delete result.redirect_uri;
+            result.redirectUris = [result.redirectUri];
+            delete result.redirectUri;
             return result;
         })
         .catch((err) => {
-        err;
+            console.log(err);
             return false;
         });
 }
 
 function getUser(username, password, client) {
     return user
-        .get(username)
+        .find({username: username, platformId: client.platformId})
         .then((result) => {
-            if (!result) return false;
-            return result.password === password && result.platformId === client.platformId && result.enabled && client.enabled ? result : false;
+            if (!result[0]) return false;
+            return result[0].password === password && result[0].enabled && client.enabled ? result[0] : false;
         })
         .catch(() => {
             return false;
@@ -86,8 +86,7 @@ function saveToken(token, client, user) {
                 token
             )
         })
-        .catch((err) => {
-        err;
+        .catch(() => {
             return false;
         });
 }
@@ -113,16 +112,7 @@ function verifyScope(token, scope) {
 function getUserFromClient(object) {
     let query = {client_id: object.client_id};
     if (query.client_secret) query.client_secret = object.client_secret;
-    return client.find(query)
-        .then((results) => {
-            if (results < 1) return false;
-            let result = results[0];
-            if (!result.user) return false;
-            return result.user;
-        }).catch((err) => {
-            console.log("getUserFromClient - Err: ", err);
-            return false;
-        });
+    return object.user;
 }
 
 /*

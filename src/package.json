@@ -4,7 +4,7 @@
   "description": "micro-service api gateway",
   "main": "app.js",
   "scripts": {
-    "start": "node ./app/bin/www --debug=5858",
+    "start": "nodemon ./bin/www --debug=5858",
     "test": "NODE_ENV=test mocha './tests/**/*.spec.js'; istanbul cover _mocha $(find ./tests -name \\\"*.spec.js\\\" -not -path \\\"./node_modules/*\\\")"
   },
   "repository": {
@@ -35,6 +35,6 @@
     "mongoose": "^4.13.9",
     "morgan": "^1.9.0",
     "oauth2-server": "github:developmentsoftware/node-oauth2-server",
-    "uuid": "^3.1.0"
+    "uuid": "^3.3.2"
   }
 }
