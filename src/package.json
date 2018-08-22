@@ -28,7 +28,7 @@
   "homepage": "https://github.com/developmentsoftware/api-gateway#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "developmentsoftware-api-commons": "^0.1.5",
+    "developmentsoftware-api-commons": "^0.1.6",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
