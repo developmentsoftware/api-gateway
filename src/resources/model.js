@@ -30,7 +30,7 @@ function getClient(clientId, clientSecret) {
         })
         .catch((err) => {
             console.log(err);
-            return false;
+            return false ;
         });
 }
 
