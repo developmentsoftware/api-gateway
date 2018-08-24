@@ -3,3 +3,6 @@
 node_modules
 src/node_modules
 src/.env
+src/config/headers/*
+src/config/anonymous/*
+src/config/authenticated/*

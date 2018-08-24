@@ -58,30 +58,33 @@ function revokeToken(token) {
 }
 
 function saveToken(token, client, user) {
-    return Promise.all([
-        accessToken.create({
-            accessToken: token.accessToken,
-            accessTokenExpiresAt: token.accessTokenExpiresAt,
-            client: client.clientId,
-            user: user.userId,
-            scope: token.scope
-        }),
-        token.refreshToken ? refreshToken.create({
-            refreshToken: token.refreshToken,
-            refreshTokenExpiresAt: token.refreshTokenExpiresAt,
-            client: client.clientId,
-            user: user.userId,
-            scope: token.scope
-        }) : [],
-
-    ])
-        .then(() => {
+    return Promise
+        .all([
+            accessToken.create({
+                accessToken: token.accessToken,
+                accessTokenExpiresAt: token.accessTokenExpiresAt,
+                client: client.clientId,
+                user: user.userId,
+                scope: token.scope
+            }),
+            refreshToken.create({
+                refreshToken: token.refreshToken,
+                refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+                client: client.clientId,
+                user: user.userId,
+                scope: token.scope
+            }),
+        ])
+        .then(([accessToken, refreshToken]) => {
             return _.assign(
                 {
-                    client: client,
-                    user: user,
-                    access_token: token.accessToken,
-                    refresh_token: token.refreshToken,
+                    client: accessToken.client,
+                    user: accessToken.user,
+                    access_token: accessToken.accessToken,
+                    access_token_expires_at: accessToken.accessTokenExpiresAt,
+                    scope: accessToken.scope,
+                    refresh_token: refreshToken.refreshToken,
+                    refresh_token_expires_at: refreshToken.refreshTokenExpiresAt,
                 },
                 token
             )
