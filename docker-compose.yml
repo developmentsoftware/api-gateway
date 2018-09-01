@@ -2,18 +2,23 @@ version: '2'
 
 services:
     api-gateway:
-        build: ./
+        build: "./"
         environment:
-            MONGO_URI: "mongodb://mongo:27017/auth"
+            MONGO_URI: ${MONGO_URI}
+            ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL}
+            REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL}
+            SECRET: ${APP_SECRET}
         volumes:
           - "./src:/src/app"
         ports:
-          - "3000:3000"
-          - "5858:5858"
+         - "${PORT}:3000"
+         - "5858:5858"
+        expose:
+         - "5858"
+        command: yarn start
     mongo:
         image: "mongo"
         volumes:
-          - "~/.gamantech/data/mongo:/data/db"
+          - "${DATA_DIR}/mongo:/data/db"
         ports:
           - "27017:27017"
-          - "8081:8081"

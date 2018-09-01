@@ -89,7 +89,8 @@ function saveToken(token, client, user) {
                 token
             )
         })
-        .catch(() => {
+        .catch((err) => {
+            console.log(err);
             return false;
         });
 }
