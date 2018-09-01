@@ -1,10 +1,9 @@
 FROM node:slim
-
-RUN mkdir -p /src/app
-
+RUN mkdir -p /src/app && npm install -g yarn nodemon
 WORKDIR /src/app
-RUN npm install nodemon -g
+COPY ./src /src/app
+RUN yarn install
 
-EXPOSE 3000 5858
+EXPOSE 3000
 
-CMD npm run start
+CMD yarn prod
