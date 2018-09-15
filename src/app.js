@@ -59,19 +59,41 @@ app.all('/oauth/token', (req, res, next) => {
 /* add crud and additional routes */
 app.use(routes);
 
+function getService(collection, req){
+
+    const path = Object.keys(collection).find((path)=>{
+        const patt = new RegExp(`^${path}/?$`);
+        return patt.test(req.path);
+    });
+
+    if (!path || !collection[path][req.method]) {
+        return false;
+    }
+    return collection[path][req.method];
+}
+
 /*  Magic of the api gateway */
 app.use((req, res, next) => {
-
-    if (!anonymous[req.path] || !anonymous[req.path][req.method]) {
+    const service = getService(anonymous, req);
+    if(false === service){
         return next();
     }
-
+    const newUrl = `${req.protocol}://${req.host}`;
     proxy(req, {
-        url: `http://${anonymous[req.path][req.method]}/${req.url}`,
+        url: `http://${service}${req.url}`,
         onResponse(response) {
+            let regex = '';
             for (header in headers) {
                 response.headers[header] = headers[header];
             }
+        },
+        modifyResponse(response) {
+            regex = new RegExp(
+                `http:\/\/${service}`,
+                'g'
+            );
+            let bodyString = JSON.stringify(response.body);
+            response.body = JSON.parse(bodyString.replace(regex, newUrl));
         }
     }, res).catch((err) => {
         return res.status(err.code).json(err)
@@ -80,22 +102,31 @@ app.use((req, res, next) => {
 
 /*  Magic of the api gateway */
 app.use((req, res, next) => {
-
-    if (!authenticated[req.path] || !authenticated[req.path][req.method]) {
+    const service = getService(authenticated, req);
+    if(false === service){
         return next();
     }
-
+    const newUrl = `${req.protocol}://${req.host}`;
     app.oauth.authenticate(req.oauth, res.oauth)
         .then((accessToken) => {
             user.get(accessToken.user).then((u) => {
                 req.headers['x-http-user-id'] = u.userId;
                 req.headers['x-http-platform-id'] = u.platformId;
                 proxy(req, {
-                    url: `http://${authenticated[req.path][req.method]}/${req.url}`,
+                    url: `http://${service}${req.url}`,
                     onResponse(response) {
+                        let regex = '';
                         for (header in headers) {
                             response.headers[header] = headers[header];
                         }
+                    },
+                    modifyResponse(response) {
+                        regex = new RegExp(
+                            `http:\/\/${service}`,
+                            'g'
+                        );
+                        let bodyString = JSON.stringify(response.body);
+                        response.body = JSON.parse(bodyString.replace(regex, newUrl));
                     }
                 }, res)
             }).catch((err) => {
@@ -121,6 +152,9 @@ app.use((err, req, res, next) => {
     res.locals.error = req.app.get('env') === 'development' ? err : '';
     // render the error page
     res.status(err.statusCode || err.status || 500);
+    if(req.app.get('env') === 'development') {
+        console.log(err);
+    }
     res.json({'code': err.statusCode || err.status || err.code || 500, 'error': err.message});
 });
 
