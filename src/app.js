@@ -67,10 +67,16 @@ app.use((req, res, next) => {
     }
 
     proxy(req, {
-        url: `http://${anonymous[req.path][req.method]}/${req.url}`,
+        url: `http://${anonymous[req.path][req.method]}${req.url}`,
         onResponse(response) {
+            let regex = '';
             for (header in headers) {
                 response.headers[header] = headers[header];
+                regex = new RegExp(
+                    `http:\/\/${authenticated[req.path][req.method]}`,
+                    'g'
+                );
+                response.body.replace(regex, req.host);
             }
         }
     }, res).catch((err) => {
@@ -91,13 +97,19 @@ app.use((req, res, next) => {
                 req.headers['x-http-user-id'] = u.userId;
                 req.headers['x-http-platform-id'] = u.platformId;
                 proxy(req, {
-                    url: `http://${authenticated[req.path][req.method]}/${req.url}`,
+                    url: `http://${authenticated[req.path][req.method]}${req.url}`,
                     onResponse(response) {
+                        let regex = '';
                         for (header in headers) {
                             response.headers[header] = headers[header];
+                            regex = new RegExp(
+                                `http:\/\/${authenticated[req.path][req.method]}`,
+                                'g'
+                            );
+                            response.body.replace(regex, req.host);
                         }
                     }
-                }, res)
+            }, res)
             }).catch((err) => {
                 return res.status(err.code).json(err)
             });
