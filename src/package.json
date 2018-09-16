@@ -33,7 +33,7 @@
     "developmentsoftware-api-commons": "^0.1.8",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
-    "http-proxy-stream": "^1.2.4",
+    "express-http-proxy": "^1.2.0",
     "lodash": "^4.17.4",
     "mongoose": "^4.13.9",
     "morgan": "^1.9.0",
