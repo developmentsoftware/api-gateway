@@ -108,6 +108,7 @@ app.use((req, res, next) => {
             user.get(accessToken.user).then((u) => {
                 req.headers['x-http-user-id'] = u.userId;
                 req.headers['x-http-platform-id'] = u.platformId;
+                req.headers['x-http-operator-id'] = u.operatorId || '';
                 proxy(target, {
                     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
                         return proxyResData.toString('utf8').replace(regex, newUrl);

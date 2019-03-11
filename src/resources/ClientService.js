@@ -17,6 +17,7 @@ class ClientService extends ModelAbstractService {
             name: data.name || model.name,
             clientId: data.clientId || model.clientId || uuidV4(),
             platformId: data.platformId || model.platformId,
+            operatorId: data.operatorId || model.operatorId || null,
             enabled: data.enabled || model.enabled || true,
             clientSecret: data.clientSecret || model.clientSecret,
             redirectUri: data.redirectUri || model.redirectUri || '',

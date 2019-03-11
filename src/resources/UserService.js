@@ -15,16 +15,18 @@ class UserService extends ModelAbstractService {
         return {
             userId: data.userId || model.userId || uuidV4(),
             platformId: data.platformId || model.platformId,
+            operatorId: data.operatorId || (typeof model !== 'undefined') ? model.operatorId : 0,
             enabled: data.enabled || model.enabled || true,
             username: data.username || model.username,
             password: data.password || model.password,
+            roles: data.roles || model.roles || [],
             scope: data.scope || model.scope || 'user',
         }
     }
 
     create(data) {
         return new Promise((resolv, reject) => {
-            this.find({username: data.username, platformId: data.platformId})
+            this.find({username: data.username, platformId: data.platformId, operatorId: data.operatorId || null})
                 .then(result => {
                     if(result.length <=0 ){
                         return this.bulkCreate([data])
@@ -35,7 +37,7 @@ class UserService extends ModelAbstractService {
                     }
                     reject({
                         statusCode: 400,
-                        message: 'Bad Request'
+                        message: `Bad Request - Has one username (${data.username}) in this platform (${data.platformId})`
                     });
                 })
                 .catch(reject);
