@@ -8,7 +8,7 @@ class AuthorizationCodeService extends ModelAbstractService {
         super('authorizationCode', storage);
     }
 
-    modelMap(data, model) {
+    modelMap(data, index, array, model) {
 
         return {
             authorizationCode: data.access_token || model.access_token,

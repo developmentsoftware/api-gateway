@@ -10,17 +10,16 @@ class UserService extends ModelAbstractService {
         this.primaryKey = 'userId';
     }
 
-    modelMap(data, model) {
-
+    modelMap(data, index, array,  model) {
         return {
             userId: data.userId || model.userId || uuidV4(),
             platformId: data.platformId || model.platformId,
-            operatorId: data.operatorId || (typeof model !== 'undefined') ? model.operatorId : 0,
-            enabled: data.enabled || model.enabled || true,
+            operatorId: data.operatorId || ((typeof model !== 'undefined') ? model.operatorId : 0),
+            enabled: data.enabled || ((typeof model !== 'undefined') ? model.enabled : false),
             username: data.username || model.username,
             password: data.password || model.password,
-            roles: data.roles || model.roles || [],
-            scope: data.scope || model.scope || 'user',
+            roles: data.roles || ((typeof model !== 'undefined') ? model.roles : []),
+            scope: data.scope || ((typeof model !== 'undefined') ? model.scope : 'user'),
         }
     }
 

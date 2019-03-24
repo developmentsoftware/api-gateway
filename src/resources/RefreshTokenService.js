@@ -11,7 +11,7 @@ class RefreshTokenService extends ModelAbstractService {
         this.primaryKey = 'refreshToken'
     }
 
-    modelMap(data, model) {
+    modelMap(data, index, array, model) {
         return {
             refreshToken: data.refreshToken || model.refreshToken,
             refreshTokenExpiresAt: data.refreshTokenExpiresAt || model.refreshTokenExpiresAt,

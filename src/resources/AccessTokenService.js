@@ -9,7 +9,7 @@ class AccessTokenService extends ModelAbstractService {
         this.primaryKey = 'accessToken';
     }
 
-    modelMap(data, model) {
+    modelMap(data, index, array, model) {
         return {
             accessToken: data.accessToken || model.accessToken,
             accessTokenExpiresAt: data.accessTokenExpiresAt || null,

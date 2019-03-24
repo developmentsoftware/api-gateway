@@ -36,9 +36,12 @@ function getClient(clientId, clientSecret) {
 
 function getUser(username, password, client) {
 
-    console.log('getUser', username,client.platformId);
+    let query =  {username: username, platformId: client.platformId};
+    if(0 !==  client.operatorId){
+        query['operatorId'] =  client.operatorId;
+    }
     return user
-        .find({username: username, platformId: client.platformId, operatorId: client.operatorId})
+        .find(query)
         .then((result) => {
             if (!result[0]) return false;
             return result[0].password === password && result[0].enabled && client.enabled ? result[0] : false;
