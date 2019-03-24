@@ -126,9 +126,9 @@ destroy@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
 
-developmentsoftware-api-commons@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/developmentsoftware-api-commons/-/developmentsoftware-api-commons-0.1.8.tgz#51026777a4b8b6207973679e3a44d1b7aec64d1f"
+developmentsoftware-api-commons@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/developmentsoftware-api-commons/-/developmentsoftware-api-commons-0.1.9.tgz#a7bac7f090978f5fb317d552ccac41c461d3801d"
   dependencies:
     bluebird "^3.5.0"
     mongodb "^2.2.28"
