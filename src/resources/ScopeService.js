@@ -8,7 +8,7 @@ class ScopeService extends ModelAbstractService {
         super('scope', storage);
     }
 
-    modelMap(data, model) {
+    modelMap(data, index, array, model) {
 
         return {
             scope: data.scope || model.scope,

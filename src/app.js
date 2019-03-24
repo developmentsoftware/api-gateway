@@ -5,7 +5,8 @@ const oauthServer = require('oauth2-server');
 const Request = oauthServer.Request;
 const Response = oauthServer.Response;
 const routes = require('./resources/routes');
-const proxy = require('http-proxy-stream');
+const proxy = require('express-http-proxy');
+
 const cors = require('cors');
 const fs = require('fs');
 const user = require('./resources/UserService');
@@ -59,9 +60,9 @@ app.all('/oauth/token', (req, res, next) => {
 /* add crud and additional routes */
 app.use(routes);
 
-function getService(collection, req){
+function getService(collection, req) {
 
-    const path = Object.keys(collection).find((path)=>{
+    const path = Object.keys(collection).find((path) => {
         const patt = new RegExp(`^${path}/?$`);
         return patt.test(req.path);
     });
@@ -75,66 +76,56 @@ function getService(collection, req){
 /*  Magic of the api gateway */
 app.use((req, res, next) => {
     const service = getService(anonymous, req);
-    if(false === service){
+    if (false === service) {
         return next();
     }
-    const newUrl = `${req.protocol}://${req.host}`;
-    proxy(req, {
-        url: `http://${service}${req.url}`,
-        onResponse(response) {
-            let regex = '';
-            for (header in headers) {
-                response.headers[header] = headers[header];
-            }
+    const newUrl = `${req.protocol}://${req.hostname}`;
+    const regex = new RegExp(`http:\\\\\\/\\\\\\/${service}`, 'g');
+    const target = `http://${service}${req.url}`;
+    proxy(target, {
+        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+            return proxyResData.toString('utf8').replace(regex, newUrl);
         },
-        modifyResponse(response) {
-            regex = new RegExp(
-                `http:\/\/${service}`,
-                'g'
-            );
-            let bodyString = JSON.stringify(response.body);
-            response.body = JSON.parse(bodyString.replace(regex, newUrl));
+        userResHeaderDecorator: (headersRes, userReq, userRes, proxyReq, proxyRes) => {
+            for (let header in headers) headersRes[header] = headers[header];
+            return headersRes;
         }
-    }, res).catch((err) => {
-        return res.status(err.code).json(err)
-    });
+    })(req, res, next);
 });
+
 
 /*  Magic of the api gateway */
 app.use((req, res, next) => {
     const service = getService(authenticated, req);
-    if(false === service){
+    if (false === service) {
         return next();
     }
-    const newUrl = `${req.protocol}://${req.host}`;
+    const newUrl = `${req.protocol}://${req.hostname}`;
+    const regex = new RegExp(`http:\\\\\\/\\\\\\/${service}`, 'g');
+    const target = `http://${service}${req.url}`;
     app.oauth.authenticate(req.oauth, res.oauth)
         .then((accessToken) => {
             user.get(accessToken.user).then((u) => {
                 req.headers['x-http-user-id'] = u.userId;
                 req.headers['x-http-platform-id'] = u.platformId;
-                proxy(req, {
-                    url: `http://${service}${req.url}`,
-                    onResponse(response) {
-                        let regex = '';
-                        for (header in headers) {
-                            response.headers[header] = headers[header];
-                        }
+                if( u.operatorId){
+                    req.headers['x-http-operator-id'] = u.operatorId;
+                }
+                proxy(target, {
+                    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+                        return proxyResData.toString('utf8').replace(regex, newUrl);
                     },
-                    modifyResponse(response) {
-                        regex = new RegExp(
-                            `http:\/\/${service}`,
-                            'g'
-                        );
-                        let bodyString = JSON.stringify(response.body);
-                        response.body = JSON.parse(bodyString.replace(regex, newUrl));
+                    userResHeaderDecorator: (headersRes, userReq, userRes, proxyReq, proxyRes) => {
+                        for (let header in headers) headersRes[header] = headers[header];
+                        return headersRes;
                     }
-                }, res)
+                })(req, res, next);
             }).catch((err) => {
-                return res.status(err.code).json(err)
+                return next(err);
             });
         })
         .catch((err) => {
-            return res.status(err.code).json(err)
+            return next(err);
         });
 });
 
@@ -152,7 +143,7 @@ app.use((err, req, res, next) => {
     res.locals.error = req.app.get('env') === 'development' ? err : '';
     // render the error page
     res.status(err.statusCode || err.status || 500);
-    if(req.app.get('env') === 'development') {
+    if (req.app.get('env') === 'development') {
         console.log(err);
     }
     res.json({'code': err.statusCode || err.status || err.code || 500, 'error': err.message});

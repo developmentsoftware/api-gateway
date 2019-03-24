@@ -11,18 +11,21 @@ class ClientService extends ModelAbstractService {
         this.primaryKey = 'clientId';
     }
 
-    modelMap(data, model = {}) {
+    modelMap(data, index, array, model = {}) {
 
+
+        console.log('client service', data, data.operatorId );
         return {
             name: data.name || model.name,
             clientId: data.clientId || model.clientId || uuidV4(),
             platformId: data.platformId || model.platformId,
-            enabled: data.enabled || model.enabled || true,
+            operatorId: data.operatorId || (typeof model === 'undefined' ? model.operatorId : 0),
+            enabled: data.enabled || (typeof model === 'undefined' ? model.enabled : true),
             clientSecret: data.clientSecret || model.clientSecret,
             redirectUri: data.redirectUri || model.redirectUri || '',
             grantTypes: data.grantTypes || model.grantTypes,
             scope: data.scope || model.scope,
-            user: data.user || model.user || null,
+            user: data.user || (typeof model === 'undefined' ? model.user : null),
         }
     }
 
