@@ -106,6 +106,8 @@ app.use((req, res, next) => {
     app.oauth.authenticate(req.oauth, res.oauth)
         .then((accessToken) => {
             user.get(accessToken.user).then((u) => {
+                req.headers['Authorization'] = req.header('Authorization');
+                req.headers['Content-Type'] = req.header('Content-Type');
                 req.headers['x-http-user-id'] = u.userId;
                 req.headers['x-http-platform-id'] = u.platformId;
                 if( u.operatorId){
