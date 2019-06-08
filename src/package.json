@@ -36,7 +36,7 @@
     "express-http-proxy": "^1.2.0",
     "lodash": "^4.17.4",
     "mongoose": "^4.13.9",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "oauth2-server": "github:developmentsoftware/node-oauth2-server",
     "uuid": "^3.3.2"
   }
