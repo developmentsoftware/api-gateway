@@ -1,5 +1,5 @@
 FROM node:slim
-RUN mkdir -p /src/app && npm install -g yarn nodemon
+RUN mkdir -p /src/app && npm install -g nodemon
 WORKDIR /src/app
 COPY ./src /src/app
 RUN yarn install
