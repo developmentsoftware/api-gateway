@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/developmentsoftware/api-gateway#readme",
   "dependencies": {
+    "bcrypt": "^3.0.7",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "developmentsoftware-api-commons": "^0.1.9",

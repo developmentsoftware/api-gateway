@@ -1,9 +1,10 @@
-let _ = require('lodash');
-let user = require('./UserService');
-let client = require('./ClientService');
-let accessToken = require('./AccessTokenService');
-let refreshToken = require('./RefreshTokenService');
-let authorizationCode = require('./AuthorizationCodeService'); //@todo aun no implentado
+const _ = require('lodash');
+const user = require('./UserService');
+const client = require('./ClientService');
+const bcrypt = require('bcrypt');
+const accessToken = require('./AccessTokenService');
+const refreshToken = require('./RefreshTokenService');
+const authorizationCode = require('./AuthorizationCodeService'); //@todo aun no implentado
 
 function getAccessToken(bearerToken) {
     return accessToken
@@ -34,7 +35,7 @@ function getClient(clientId, clientSecret) {
         });
 }
 
-function getUser(username, password, client) {
+function getUser(username, passwordPlainText, client) {
 
     let query =  {username: username, platformId: client.platformId};
     if(0 !==  client.operatorId){
@@ -44,7 +45,9 @@ function getUser(username, password, client) {
         .find(query)
         .then((result) => {
             if (!result[0]) return false;
-            return result[0].password === password && result[0].enabled && client.enabled ? result[0] : false;
+            const {password, enabled} = result[0];
+            const passwordVerify = bcrypt.compareSync(passwordPlainText, password);
+            return passwordVerify && enabled && client.enabled ? result[0] : false;
         })
         .catch(() => {
             return false;
