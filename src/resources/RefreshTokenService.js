@@ -12,12 +12,15 @@ class RefreshTokenService extends ModelAbstractService {
     }
 
     modelMap(data, index, array, model) {
+
+        console.log("data", data,"model", model);
+        console.log("data.user", data.user);
         return {
-            refreshToken: data.refreshToken || model.refreshToken,
-            refreshTokenExpiresAt: data.refreshTokenExpiresAt || model.refreshTokenExpiresAt,
-            user: data.user || model.user,
-            client: data.client || model.client,
-            scope: data.scope || model.scope,
+            refreshToken: data.refreshToken? data.refreshToken : model !== undefined ? model.refreshToken : null,
+            refreshTokenExpiresAt: data.refreshTokenExpiresAt? data.refreshTokenExpiresAt :  model !== undefined ? model.refreshTokenExpiresAt : null,
+            user: data.user? data.user : model !== undefined ? model.user : null,
+            client: data.client? data.client : model !== undefined ? model.client : null,
+            scope: data.scope? data.scope : model !== undefined ? model.scope: null,
         }
     }
 

@@ -3,9 +3,7 @@ RUN mkdir -p /src/app && npm install -g nodemon && apt update && apt install -y 
     && ln -s /usr/bin/python2.7 /usr/local/bin/python
 WORKDIR /src/app
 COPY ./src /src/app
-RUN yarn install \
-    && apt remove --purge --auto-remove -y build-essential \
-    && rm -rf /var/lib/apt/lists/*
+RUN yarn install
 
 EXPOSE 3000
 
